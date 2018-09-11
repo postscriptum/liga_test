@@ -7,6 +7,9 @@ class Source(models.Model):
     name = models.CharField(max_length=100)
     url = models.URLField()
 
+    def __str__(self):
+        return self.sid
+
 
 class Document(models.Model):
     title = models.CharField(max_length=100)
@@ -18,3 +21,6 @@ class Document(models.Model):
     updated = models.DateField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     edit_count = models.PositiveSmallIntegerField(default=0)
+
+    def __str__(self):
+        return self.title
