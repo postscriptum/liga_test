@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.core import serializers
 from django.http import HttpResponse
 from .models import Source, Document
+from .tasks import save_data
 
 
 @admin.register(Source)
@@ -17,7 +18,7 @@ class DocumentAdmin(admin.ModelAdmin):
     readonly_fields = ('edit_count', 'user')
     search_fields = ['title', 'text']
     list_filter = ('source', 'user', 'created', 'updated')
-    actions = ['download_json']
+    actions = ['download_json', 'save_to_file']
 
     def save_model(self, request, obj, form, change):
         if change and not request.user.is_superuser:
@@ -39,6 +40,13 @@ class DocumentAdmin(admin.ModelAdmin):
         return response
     download_json.short_description = 'Download JSON'
     download_json.allowed_permissions = ('admin',)
+
+    def save_to_file(self, request, queryset):
+        data = serializers.serialize('json', queryset)
+        save_data.delay(data)
+        self.message_user(request, 'Data successfully saved to file')
+    save_to_file.short_description = 'Save to file'
+    save_to_file.allowed_permissions = ('admin',)
 
     def has_admin_permission(self, request):
         return request.user.is_superuser

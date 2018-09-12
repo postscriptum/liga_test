@@ -2,3 +2,4 @@ venv
 /static
 *.pyc
 *.sqlite3
+/save.json
