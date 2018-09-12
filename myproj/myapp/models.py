@@ -17,8 +17,8 @@ class Document(models.Model):
     url = models.URLField()
     created = models.DateTimeField()
     source = models.ForeignKey(Source, on_delete=models.CASCADE)
-    added = models.DateField(auto_now_add=True)
-    updated = models.DateField(auto_now=True)
+    added = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     edit_count = models.PositiveSmallIntegerField(default=0)
 
