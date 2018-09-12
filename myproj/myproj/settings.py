@@ -25,7 +25,7 @@ SECRET_KEY = 'x^o7wm0pbz0r5+0u+pjdnpg*=j%lj_!y(*k3-qeoid*8&xonf6'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'postscriptum.pythonanywhere.com']
 
 
 # Application definition
