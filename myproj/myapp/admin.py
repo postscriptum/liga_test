@@ -1,6 +1,8 @@
 from datetime import datetime, timedelta, timezone
 from django.contrib import messages
 from django.contrib import admin
+from django.core import serializers
+from django.http import HttpResponse
 from .models import Source, Document
 
 
@@ -15,6 +17,7 @@ class DocumentAdmin(admin.ModelAdmin):
     readonly_fields = ('edit_count', 'user')
     search_fields = ['title', 'text']
     list_filter = ('source', 'user', 'created', 'updated')
+    actions = ['download_json']
 
     def save_model(self, request, obj, form, change):
         if change and not request.user.is_superuser:
@@ -28,3 +31,14 @@ class DocumentAdmin(admin.ModelAdmin):
         else:
             obj.user = request.user
         super().save_model(request, obj, form, change)
+
+    def download_json(self, request, queryset):
+        response = HttpResponse(content_type='application/json')
+        serializers.serialize('json', queryset, stream=response)
+        response['Content-Disposition'] = 'attachment; filename="result.json"'
+        return response
+    download_json.short_description = 'Download JSON'
+    download_json.allowed_permissions = ('admin',)
+
+    def has_admin_permission(self, request):
+        return request.user.is_superuser
